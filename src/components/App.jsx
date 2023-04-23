@@ -1,16 +1,14 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import React, { Component } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Search } from './Search/Search';
+export class App extends Component {
+  render() {
+    return (
+      <div>
+        <Search />
+        <ToastContainer />
+      </div>
+    );
+  }
+}
