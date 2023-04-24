@@ -1,4 +1,5 @@
 import { Skeleton } from '@mui/material';
+import PropTypes from 'prop-types';
 
 export const Plug = ({ num }) => {
   let markup = [];
@@ -14,3 +15,4 @@ export const Plug = ({ num }) => {
   }
   return markup;
 };
+Plug.propTypes = { num: PropTypes.number.isRequired };

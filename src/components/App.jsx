@@ -7,7 +7,7 @@ export class App extends PureComponent {
   state = { query: '' };
 
   handleSubmit = ({ query }) => {
-    this.setState({ query });
+    this.setState({ query: query.trim() });
   };
 
   render() {

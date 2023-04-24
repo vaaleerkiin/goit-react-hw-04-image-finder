@@ -1,6 +1,8 @@
 import { Wrap } from './ImageGalleryItem.styled';
 import { Modal } from '../Modal/Modal';
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 export class ImageGalleryItem extends Component {
   state = { modal: false };
 
@@ -14,12 +16,12 @@ export class ImageGalleryItem extends Component {
   };
 
   render() {
-    const { id, src, alt, img } = this.props;
+    const { src, alt, img } = this.props;
 
     const { modal } = this.state;
 
     return (
-      <Wrap key={id}>
+      <Wrap>
         <img src={src} alt={alt} onClick={this.toogleModal} />
         {modal && (
           <Modal
@@ -37,3 +39,8 @@ export class ImageGalleryItem extends Component {
     );
   }
 }
+ImageGalleryItem.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
+};

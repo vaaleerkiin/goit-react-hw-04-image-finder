@@ -8,9 +8,9 @@ import {
 } from './ImageGallery.styled';
 import { Plug } from '../Plug/Plug';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
 import { Pixabay } from '../../api/fetch';
-
+import PropTypes from 'prop-types';
 export class ImageGallery extends Component {
   state = { images: [], status: 'idle', page: null, error: '' };
 
@@ -117,3 +117,4 @@ export class ImageGallery extends Component {
     );
   }
 }
+ImageGallery.propTypes = { value: PropTypes.string.isRequired };

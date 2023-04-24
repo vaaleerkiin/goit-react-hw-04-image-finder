@@ -2,9 +2,10 @@ import { Formik, Field, ErrorMessage } from 'formik';
 import { object, string } from 'yup';
 import { Input, Submit, Wrap, FormWrap } from './Searchbar.styled';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 const schema = object({
-  query: string().required('Fill in the fields'),
+  query: string().required('Fill in the fields').trim(),
 });
 export const Searchbar = ({ onSubmit }) => {
   return (
@@ -41,3 +42,4 @@ export const Searchbar = ({ onSubmit }) => {
     </Wrap>
   );
 };
+Searchbar.propTypes = { onSubmit: PropTypes.func.isRequired };
