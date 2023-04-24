@@ -72,7 +72,7 @@ export class ImageGallery extends Component {
     return (
       <Wrap>
         <List>
-          {status === 'resolved' &&
+          {images &&
             images.map(({ id, largeImageURL, tags, webformatURL }) => {
               return (
                 <ImageGalleryItem
@@ -83,11 +83,7 @@ export class ImageGallery extends Component {
                 />
               );
             })}
-          {status === 'pending' && (
-            <Plug
-              num={this.fetchData.getPerPage() * this.fetchData.getPage()}
-            />
-          )}
+          {status === 'pending' && <Plug num={this.fetchData.getPerPage()} />}
         </List>
         {status === 'resolved' &&
           this.fetchData.getPage() < this.fetchData.getTotalPage() && (
