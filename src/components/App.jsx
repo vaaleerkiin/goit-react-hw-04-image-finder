@@ -1,12 +1,20 @@
-import React, { Component } from 'react';
-
+import React, { PureComponent } from 'react';
+import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
 import 'react-toastify/dist/ReactToastify.css';
-import { Search } from './Search/Search';
-export class App extends Component {
+
+export class App extends PureComponent {
+  state = { query: '' };
+
+  handleSubmit = ({ query }) => {
+    this.setState({ query });
+  };
+
   render() {
     return (
       <div>
-        <Search />
+        <Searchbar onSubmit={this.handleSubmit} />
+        <ImageGallery value={this.state.query} />
       </div>
     );
   }
