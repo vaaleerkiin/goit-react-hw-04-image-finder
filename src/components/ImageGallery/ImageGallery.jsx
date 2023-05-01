@@ -20,11 +20,11 @@ export const ImageGallery = ({ value }) => {
 
   useEffect(() => {
     if (value !== '') {
+      setPage(1);
+      fetchData.resetPage();
       try {
         setstatus('pending');
         async function makeRequest() {
-          fetchData.resetPage();
-          setPage(1);
           const response = await fetchData.getImages(value);
           setImages(response);
           setstatus('resolved');
@@ -38,7 +38,7 @@ export const ImageGallery = ({ value }) => {
   }, [value]);
 
   useEffect(() => {
-    if (value !== '' && page > 1) {
+    if (value !== '' && fetchData.getPage() !== 1) {
       try {
         setstatus('pending');
         scrollBottom();
