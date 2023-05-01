@@ -1,44 +1,37 @@
+import { useState } from 'react';
 import { Wrap } from './ImageGalleryItem.styled';
 import { Modal } from '../Modal/Modal';
-import { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export class ImageGalleryItem extends Component {
-  state = { modal: false };
+export const ImageGalleryItem = ({ alt, src, img }) => {
+  const [modal, setModal] = useState(false);
 
-  toogleModal = () => {
-    this.setState(prevState => {
-      return { modal: !prevState.modal };
-    });
+  const toogleModal = () => {
+    setModal(prevState => !prevState);
   };
-  onKeyDown = e => {
+  const onKeyDown = e => {
     console.log(e);
   };
 
-  render() {
-    const { src, alt, img } = this.props;
+  return (
+    <Wrap>
+      <img src={src} alt={alt} onClick={toogleModal} />
+      {modal && (
+        <Modal
+          open={true}
+          onClick={toogleModal}
+          img={img}
+          tags={alt}
+          onKey={onKeyDown}
+          onKeyDown={() => {
+            console.log('hi');
+          }}
+        />
+      )}
+    </Wrap>
+  );
+};
 
-    const { modal } = this.state;
-
-    return (
-      <Wrap>
-        <img src={src} alt={alt} onClick={this.toogleModal} />
-        {modal && (
-          <Modal
-            open={true}
-            onClick={this.toogleModal}
-            img={img}
-            tags={alt}
-            onKey={this.onKeyDown}
-            onKeyDown={() => {
-              console.log('hi');
-            }}
-          />
-        )}
-      </Wrap>
-    );
-  }
-}
 ImageGalleryItem.propTypes = {
   src: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,

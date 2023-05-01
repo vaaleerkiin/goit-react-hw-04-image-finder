@@ -20,6 +20,7 @@ export class Pixabay {
         per_page: this.per_page,
       },
     };
+
     const response = await axios.get(this.URL, options);
     this.totalPage = Math.ceil(response.data.totalHits / this.per_page);
     return response.data.hits;

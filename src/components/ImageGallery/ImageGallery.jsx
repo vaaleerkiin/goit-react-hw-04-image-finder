@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Wrap,
   List,
@@ -11,106 +11,112 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { toast } from 'react-toastify';
 import { Pixabay } from '../../api/fetch';
 import PropTypes from 'prop-types';
-export class ImageGallery extends Component {
-  state = { images: [], status: 'idle', page: null, error: '' };
+const fetchData = new Pixabay();
+export const ImageGallery = ({ value }) => {
+  const [images, setImages] = useState([]);
+  const [status, setstatus] = useState('idle');
+  const [page, setPage] = useState(null);
+  const [error, setError] = useState('');
 
-  fetchData = new Pixabay();
-
-  componentDidUpdate = async (prevProps, prevState) => {
-    if (prevProps.value !== this.props.value) {
-      this.setState({ status: 'pending' });
+  useEffect(() => {
+    if (value !== '') {
       try {
-        this.fetchData.resetPage();
-        const response = await this.fetchData.getImages(this.props.value);
-        this.setState({
-          images: response,
-          page: 1,
-        });
-
-        this.setState({ status: 'resolved' });
+        setstatus('pending');
+        async function makeRequest() {
+          fetchData.resetPage();
+          setPage(1);
+          const response = await fetchData.getImages(value);
+          setImages(response);
+          setstatus('resolved');
+        }
+        makeRequest();
       } catch (error) {
-        this.setState({ status: 'rejected', error: error.message });
-      }
-    } else if (this.state.page > prevState.page && this.state.page !== 1) {
-      this.setState({ status: 'pending' });
-      try {
-        const response = await this.fetchData.getImages(this.props.value);
-        this.setState({ images: [...prevState.images, ...response] });
-
-        this.setState({ status: 'resolved' });
-      } catch (error) {
-        this.setState({ status: 'rejected', error: error.message });
+        setstatus('rejected');
+        setError(error.message);
       }
     }
+  }, [value]);
+
+  useEffect(() => {
+    if (value !== '' && page > 1) {
+      try {
+        setstatus('pending');
+        scrollBottom();
+        async function makeRequest() {
+          const response = await fetchData.getImages(value);
+          setImages(prevState => [...prevState, ...response]);
+          setstatus('resolved');
+        }
+        makeRequest();
+      } catch (error) {
+        setstatus('rejected');
+        setError(error.message);
+      }
+    }
+  }, [value, page]);
+
+  const incrementPage = () => {
+    fetchData.incrementPage();
+    setPage(fetchData.getPage());
   };
 
-  incrementPage = () => {
-    this.fetchData.incrementPage();
-    this.setState({ page: this.fetchData.getPage() });
+  const handleLoadMore = () => {
+    incrementPage();
   };
 
-  handleLoadMore = () => {
-    this.incrementPage();
+  return (
+    <Wrap>
+      <List>
+        {images &&
+          images.map(({ largeImageURL, tags, webformatURL }, idx) => {
+            return (
+              <ImageGalleryItem
+                alt={tags}
+                key={idx}
+                src={webformatURL}
+                img={largeImageURL}
+              />
+            );
+          })}
+        {status === 'pending' && <Plug num={fetchData.getPerPage()} />}
+      </List>
+      {status === 'resolved' &&
+        fetchData.getPage() < fetchData.getTotalPage() && (
+          <LoadMore type="button" onClick={handleLoadMore} variant="contained">
+            Load more
+          </LoadMore>
+        )}
+      {status === 'rejected' &&
+        toast.error(error, {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'colored',
+        })}
+      <ArrowBtn onClick={BackToTop}>
+        <ArrowTop />
+      </ArrowBtn>
+    </Wrap>
+  );
+};
 
-    setTimeout(() => {
-      window.scrollBy({
-        top: 700,
-        behavior: 'smooth',
-      });
-    }, 100);
-  };
+ImageGallery.propTypes = { value: PropTypes.string.isRequired };
 
-  BackToTop = () => {
-    window.scrollTo({
-      top: 0,
+const BackToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+};
+const scrollBottom = () => {
+  setTimeout(() => {
+    window.scrollBy({
+      top: 700,
       behavior: 'smooth',
     });
-  };
-
-  render() {
-    const { status, images, error } = this.state;
-    return (
-      <Wrap>
-        <List>
-          {images &&
-            images.map(({ id, largeImageURL, tags, webformatURL }) => {
-              return (
-                <ImageGalleryItem
-                  alt={tags}
-                  key={id}
-                  src={webformatURL}
-                  img={largeImageURL}
-                />
-              );
-            })}
-          {status === 'pending' && <Plug num={this.fetchData.getPerPage()} />}
-        </List>
-        {status === 'resolved' &&
-          this.fetchData.getPage() < this.fetchData.getTotalPage() && (
-            <LoadMore
-              type="button"
-              onClick={this.handleLoadMore}
-              variant="contained"
-            >
-              Load more
-            </LoadMore>
-          )}
-        {status === 'rejected' &&
-          toast.error(error, {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'colored',
-          })}
-        <ArrowBtn onClick={this.BackToTop}>
-          <ArrowTop />
-        </ArrowBtn>
-      </Wrap>
-    );
-  }
-}
-ImageGallery.propTypes = { value: PropTypes.string.isRequired };
+  }, 100);
+};
