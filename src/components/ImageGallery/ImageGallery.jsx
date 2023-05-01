@@ -14,24 +14,25 @@ import PropTypes from 'prop-types';
 const fetchData = new Pixabay();
 export const ImageGallery = ({ value }) => {
   const [images, setImages] = useState([]);
-  const [status, setstatus] = useState('idle');
-  const [page, setPage] = useState(null);
+  const [status, setStatus] = useState('idle');
+  const [page, setPage] = useState(1);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (value !== '') {
-      setPage(1);
-      fetchData.resetPage();
       try {
-        setstatus('pending');
         async function makeRequest() {
+          setStatus('pending');
+          fetchData.resetPage();
+          setPage(fetchData.getPage());
+          setImages([]);
           const response = await fetchData.getImages(value);
           setImages(response);
-          setstatus('resolved');
+          setStatus('resolved');
         }
         makeRequest();
       } catch (error) {
-        setstatus('rejected');
+        setStatus('rejected');
         setError(error.message);
       }
     }
@@ -40,16 +41,16 @@ export const ImageGallery = ({ value }) => {
   useEffect(() => {
     if (value !== '' && fetchData.getPage() !== 1) {
       try {
-        setstatus('pending');
-        scrollBottom();
         async function makeRequest() {
+          setStatus('pending');
+          scrollBottom();
           const response = await fetchData.getImages(value);
           setImages(prevState => [...prevState, ...response]);
-          setstatus('resolved');
+          setStatus('resolved');
         }
         makeRequest();
       } catch (error) {
-        setstatus('rejected');
+        setStatus('rejected');
         setError(error.message);
       }
     }
@@ -58,10 +59,6 @@ export const ImageGallery = ({ value }) => {
   const incrementPage = () => {
     fetchData.incrementPage();
     setPage(fetchData.getPage());
-  };
-
-  const handleLoadMore = () => {
-    incrementPage();
   };
 
   return (
@@ -82,7 +79,7 @@ export const ImageGallery = ({ value }) => {
       </List>
       {status === 'resolved' &&
         fetchData.getPage() < fetchData.getTotalPage() && (
-          <LoadMore type="button" onClick={handleLoadMore} variant="contained">
+          <LoadMore type="button" onClick={incrementPage} variant="contained">
             Load more
           </LoadMore>
         )}
