@@ -24,7 +24,7 @@ export const ImageGallery = ({ value }) => {
         async function makeRequest() {
           setStatus('pending');
           fetchData.resetPage();
-          setPage(1);
+          setPage(fetchData.getPage());
           setImages([]);
           const response = await fetchData.getImages(value);
           setImages(response);
