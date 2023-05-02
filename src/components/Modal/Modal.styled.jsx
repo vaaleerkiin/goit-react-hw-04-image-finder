@@ -7,6 +7,7 @@ export const Img = styled.img`
 export const Backdrop = styled(Dialog)`
   div:has(img) {
     border-radius: 8px;
+    background-color: transparent;
     overflow: hidden;
     object-fit: contain;
     display: flex;

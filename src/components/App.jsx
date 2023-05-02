@@ -1,21 +1,16 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import 'react-toastify/dist/ReactToastify.css';
 
-export class App extends PureComponent {
-  state = { query: '' };
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const handleSubmit = ({ query }) => setQuery(query.trim());
 
-  handleSubmit = ({ query }) => {
-    this.setState({ query: query.trim() });
-  };
-
-  render() {
-    return (
-      <div>
-        <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery value={this.state.query} />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <Searchbar onSubmit={handleSubmit} />
+      <ImageGallery value={query} />
+    </div>
+  );
+};
